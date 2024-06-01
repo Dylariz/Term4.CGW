@@ -54,11 +54,11 @@ List<int> GetClearNumbers(string filename)
         int end = e + a;
 
         // Calculate fuzzy set [i]
-        var fuzzySet = new List<ProbTermPair>();
+        var fuzzySet = new List<TermMembPair>();
         for (int i = start; i <= end; i++)
         {
             var membership = Functions.TriangularMembershipFunc(i, e, a);
-            fuzzySet.Add(new ProbTermPair(i, membership));
+            fuzzySet.Add(new TermMembPair(i, membership));
         }
 
         // Defuzzification

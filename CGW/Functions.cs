@@ -34,7 +34,7 @@ public static class Functions
         return data;
     }
 
-    public static int CenterOfGravityMethod(List<ProbTermPair> fuzzySet)
+    public static int CenterOfGravityMethod(List<TermMembPair> fuzzySet)
     {
         float result = 0;
 
