@@ -1,3 +1,3 @@
 namespace CGW;
 
-public record ProbTermPair(float Probability, int Term);
+public record ProbTermPair(int Term, float Membership);

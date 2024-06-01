@@ -2,51 +2,54 @@ namespace CGW;
 
 public static class Functions
 {
-    public static List<ProbTermPair>? ReadFromFile(string path, int step = 1)
+    public static List<(int, int)> ReadFromFile(string path)
     {
-        var sr = new StreamReader(path);
-        var file = sr.ReadToEnd().Split('\n');
+        using var sr = new StreamReader(path);
+        var file = sr.ReadToEnd().Trim('\n').Split('\n');
+        var fileName = Path.GetFileName(path);
         
-        if (file.Length != 2)
-            return null;
-
-        var probabilities = file[0].Split(' ');
-        var terms = file[1].Split(' ');
-        
-        if (probabilities.Length != terms.Length)
-            return null;
-
-        var fuzzySet = new List<ProbTermPair>(); // (probability; term)
-        for (int i = 0; i < terms.Length; i++)
+        var data = new List<(int, int)>(); // (e; a)
+        for (int i = 0; i < file.Length; i++)
         {
-            if (!float.TryParse(probabilities[i], out var prob))
-                return null;
-
-            if (prob is > 1 or < 0)
-                return null;
-
-            if (!int.TryParse(terms[i], out var term))
-                return null;
+            var line = file[i].Split(' ');
             
-            fuzzySet.Add(new ProbTermPair(prob, term));
+            if (line.Length != 2)
+                throw new ArgumentException($"{fileName} - Строка {i+1}: Количество элементов в строке не равно 2.");
+            
+            if (!int.TryParse(line[0], out var e))
+                throw new ArgumentException($"{fileName} - Строка {i+1}: Не удалось преобразовать первый элемент (e) в число.");
 
-            if (i != 0 && fuzzySet[i].Term != fuzzySet[i-1].Term + step)
-                return null;
+            if (!int.TryParse(line[1], out var a))
+                throw new ArgumentException($"{fileName} - Строка {i+1}: Не удалось преобразовать второй элемент (a) в число.");
+            
+            if (a < 0)
+                throw new ArgumentException($"{fileName} - Строка {i+1}: Второй элемент (a) должен быть больше или равен 0.");
+
+            if (e - a < 0)
+                throw new ArgumentException($"{fileName} - Строка {i+1}: e - a должно быть больше или равно 0.");
+            
+            data.Add((e, a));
         }
 
-        return fuzzySet;
+        return data;
     }
 
     public static int CenterOfGravityMethod(List<ProbTermPair> fuzzySet)
     {
         float result = 0;
 
-        var denominator = fuzzySet.Select(x => x.Probability).Sum();
+        var denominator = fuzzySet.Select(x => x.Membership).Sum();
         foreach (var pair in fuzzySet)
         {
-            result += pair.Term * pair.Probability / denominator;
+            result += pair.Term * pair.Membership / denominator;
         }
 
         return (int)Math.Round(result);
+    }
+    
+    public static float TriangularMembershipFunc(int x, int e, int a)
+    {
+        var w = e - a <= x && x < e + a ? 1 : 0;
+        return w * (a - Math.Abs(x - e)) / (float)a;
     }
 }
