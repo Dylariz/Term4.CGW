@@ -24,6 +24,27 @@ tree.InsertRange(GetClearNumbers("addition.txt"));
 
 Console.WriteLine("\nДерево, после добавления узлов:");
 tree.Print();
+
+Console.WriteLine("\nДанные для поиска:\n");
+var searchNumbers = GetClearNumbers("search.txt");
+
+Console.WriteLine("Результаты поиска:\n");
+foreach (var number in searchNumbers)
+{
+    Console.WriteLine($"Искомое число: {number}");
+    List<int>? res = tree.Search(number);
+    if (res == null)
+    {
+        Console.WriteLine($"Результат поиска: Число {number} не найдено.");
+    }
+    else
+    {
+        Console.WriteLine($"Результат поиска: Число {number} найдено.");
+        Console.WriteLine($"Путь к числу: {string.Join(" -> ", res)}");
+    }
+    Console.WriteLine();
+}
+
 Console.ReadLine();
 return;
 

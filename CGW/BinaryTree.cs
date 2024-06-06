@@ -87,6 +87,33 @@ public class BinaryTree
     {
         _root = null;
     }
+    
+    public List<int>? Search(int value)
+    {
+        return Search(_root, new List<Node>(), value);
+    }
+    
+    // Возвращает путь от корня до узла с заданным значением
+    private List<int>? Search(Node? current, List<Node> path, int value)
+    {
+        if (current == null)
+        {
+            return null;
+        }
+
+        path.Add(current);
+        if (current.Value == value)
+        {
+            return path.Select(x => x.Value).ToList();
+        }
+
+        if (value < current.Value)
+        {
+            return Search(current.Left, path, value);
+        }
+
+        return Search(current.Right, path, value);
+    }
         
 
     #region ConsolePrint
